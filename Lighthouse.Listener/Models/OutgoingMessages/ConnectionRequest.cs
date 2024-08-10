@@ -1,6 +1,6 @@
-namespace Lighthouse.Listener.Models.Messages;
+namespace Lighthouse.Listener.Models.OutgoingMessages;
 
-public class ConnectionMessage
+public class ConnectionRequest
 {
   public string APIKey { get; set; } = "";
   public List<List<List<double>>> BoundingBoxes { get; set; } = new();

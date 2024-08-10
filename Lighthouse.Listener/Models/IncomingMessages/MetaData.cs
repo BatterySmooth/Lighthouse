@@ -1,4 +1,4 @@
-namespace Lighthouse.Listener.Models.Messages;
+namespace Lighthouse.Listener.Models.IncomingMessages;
 
 public class MetaData
 {

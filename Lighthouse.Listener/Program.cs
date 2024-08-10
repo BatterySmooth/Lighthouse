@@ -1,10 +1,9 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
-using System.IO;
 using System.Net.WebSockets;
 using System.Text;
-using Lighthouse.Listener.Models.Messages;
-using Microsoft.CSharp.RuntimeBinder;
+using Lighthouse.Listener.Models.IncomingMessages;
+using Lighthouse.Listener.Models.OutgoingMessages;
 
 namespace Lighthouse.Listener
 {
@@ -20,7 +19,7 @@ namespace Lighthouse.Listener
         .AddJsonFile("secrets.json", optional: true, reloadOnChange: true)
         .Build();
 
-      var connectionMsg = new ConnectionMessage
+      var connectionMsg = new ConnectionRequest
       {
         APIKey = Configuration["AISKey"] ?? throw new Exception("No AIS API Key has been supplied"),
         BoundingBoxes = new List<List<List<double>>> { new() { new List<double> { -180, -90 }, new List<double> { 180, 90 } } },
