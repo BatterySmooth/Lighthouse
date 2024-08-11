@@ -1,7 +1,4 @@
-﻿using System.Runtime.InteropServices.JavaScript;
-using Lighthouse.Listener.Models.IncomingMessages;
-
-namespace Lighthouse.Listener.data;
+﻿namespace Lighthouse.Listener.data;
 
 public class DbPositionReport
 {

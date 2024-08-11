@@ -1,5 +1,4 @@
-﻿using Lighthouse.Listener.Models.IncomingMessages;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace Lighthouse.Listener.data;
 
