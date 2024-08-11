@@ -1,4 +1,4 @@
-namespace Lighthouse.AISListener.OutgoingMessages;
+namespace Lighthouse.AIS.OutgoingMessages;
 
 public class ConnectionRequest
 {

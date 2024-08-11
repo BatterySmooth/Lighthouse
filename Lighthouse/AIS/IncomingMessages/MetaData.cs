@@ -1,4 +1,4 @@
-namespace Lighthouse.AISListener.IncomingMessages;
+namespace Lighthouse.AIS.IncomingMessages;
 
 public class MetaData
 {

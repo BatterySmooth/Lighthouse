@@ -1,32 +1,31 @@
 ﻿using System.Net.WebSockets;
 using System.Text;
-using Lighthouse.AISListener.IncomingMessages;
-using Lighthouse.AISListener.OutgoingMessages;
+using Lighthouse.AIS.IncomingMessages;
+using Lighthouse.AIS.OutgoingMessages;
 using Lighthouse.Configuration;
 using Lighthouse.Data;
 using Lighthouse.Data.Models;
 using Lighthouse.Logging;
 using Newtonsoft.Json;
 
-namespace Lighthouse.AISListener;
+namespace Lighthouse.AIS;
 
 public class AISService
 {
-  private readonly CancellationTokenSource _cancellationTokenSource;
   public CancellationToken Token { get; }
   private ClientWebSocket _webSocket;
-  private bool _isRunning = false;
+  private bool _isRunning;
   private int _attempt;
 
   public AISService()
   {
-    _cancellationTokenSource = new CancellationTokenSource();
-    Token = _cancellationTokenSource.Token;
+    var cancellationTokenSource = new CancellationTokenSource();
+    Token = cancellationTokenSource.Token;
   }
 
   public async Task InitializeAsync()
   {
-    Logger.LogSync("Starting AIS Service...");
+    Logger.LogSync("Starting AIS Service");
     _isRunning = true;
     _attempt = 0;
     await Connect();
@@ -35,7 +34,6 @@ public class AISService
 
   private async Task Connect()
   {
-    Logger.LogSync("Establishing WebSocket connection...");
     var connectionMsg = new ConnectionRequest
     {
       APIKey = Config.AISKey,
@@ -53,7 +51,7 @@ public class AISService
   private async Task ListenAndProcess()
   {
     byte[] buffer = new byte[4096];
-    Logger.LogSync("Awaiting messages");
+    Logger.LogSync("Awaiting AIS messages");
 
     while (_isRunning && _webSocket.State == WebSocketState.Open)
     {
@@ -103,24 +101,5 @@ public class AISService
     Logger.LogSync($"Waiting {delay} ms before retrying...");
     await Task.Delay(delay);
   }
-
-
-  // public static async Task Initialise()
-  // {
-  //   Logger.LogSync("Configuring AIS Connection Request...");
-  //   var connectionMsg = new ConnectionRequest
-  //   {
-  //     APIKey = Config.AISKey,
-  //     BoundingBoxes = new List<List<List<double>>> { new() { new List<double> { -180, -90 }, new List<double> { 180, 90 } } },
-  //     FiltersShipMMSI = new List<string> { Config.SagaBlueMMSI, "229490000", "235088985" },
-  //     FilterMessageTypes = new List<string> { "PositionReport" }
-  //   };
-  //   
-  //   string jsonString = JsonConvert.SerializeObject(connectionMsg);
-  //   
-  //   Logger.LogSync("Connecting to AIS...");
-  //   await ws.ConnectAsync(new Uri("wss://stream.aisstream.io/v0/stream"), Program.Token);
-  //   await ws.SendAsync(new ArraySegment<byte>(Encoding.UTF8.GetBytes(jsonString)), WebSocketMessageType.Text, true, Program.Token);
-  //   byte[] buffer = new byte[4096];
-  // }
+  
 }
