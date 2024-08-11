@@ -1,6 +1,6 @@
-﻿namespace Lighthouse.Listener.data;
+﻿namespace Lighthouse.Data.Models;
 
-public class DbPositionReport
+public class PositionReportRecord
 {
   public Guid PositionReportID { get; set; }
   public DateTime ReceivedDate { get; set; }

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Concurrent;
 
-namespace Lighthouse.Listener.Logging;
+namespace Lighthouse.Logging;
 
 public static class Logger
 {

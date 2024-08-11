@@ -1,4 +1,4 @@
-namespace Lighthouse.Listener.Models.IncomingMessages;
+namespace Lighthouse.AISListener.IncomingMessages;
 public class PositionReport
 {
   public int MessageID { get; set; }
