@@ -1,22 +1,21 @@
 ﻿using System.Net;
-using System.Net.WebSockets;
 using System.Text;
 using Lighthouse.Configuration;
 using Lighthouse.Data;
 using Lighthouse.Logging;
-using Lighthouse.Websockets;
 using Newtonsoft.Json;
 
 namespace Lighthouse.API;
 
 public class APIService
 {
+  private static string _host;
   public static async Task Initialise()
   {
-    var host = $"http://{Config.APIHost}:{Config.APIPort}/";
-    Logger.LogSync($"Starting API Service on {host}");
+    _host = $"http://{Config.APIHost}:{Config.APIPort}/";
+    Logger.LogSync($"Starting API Service on {_host}");
     HttpListener httpListener = new HttpListener();
-    httpListener.Prefixes.Add(host);
+    httpListener.Prefixes.Add(_host);
     httpListener.Start();
 
     while (true)
@@ -30,8 +29,15 @@ public class APIService
   {
     HttpListenerRequest request = context.Request;
     HttpListenerResponse response = context.Response;
-    string route = GetRouteFromUrl(request.Url.PathAndQuery);
     
+    // if (request.IsWebSocketRequest)
+    // {
+    //   Logger.LogSync("WebSocket Secure (WSS) request received.");
+    //   await ProcessWebSocketUpgrade(context);
+    // }
+    // else
+    // {
+    string route = GetRouteFromUrl(request.Url.PathAndQuery);
     switch (route.ToLower())
     {
       case "/api/getdata":
@@ -41,7 +47,45 @@ public class APIService
         await RespondWithError(response, 404, "Endpoint not found");
         return;
     }
+    // }
   }
+  
+  // private static async Task ProcessWebSocketUpgrade(HttpListenerContext context)
+  // {
+  //   HttpListenerRequest request = context.Request;
+  //   HttpListenerResponse response = context.Response;
+  //
+  //   // Check if the request is a valid WebSocket upgrade request
+  //   if (!request.IsWebSocketRequest)
+  //   {
+  //     Logger.LogSync("Not a valid WebSocket request.");
+  //     await RespondWithError(response, 400, "Invalid WebSocket request");
+  //     return;
+  //   }
+  //
+  //   // Prepare the response to accept the WebSocket upgrade
+  //   response.StatusCode = 101; // Switching Protocols
+  //   response.StatusDescription = "Switching Protocols";
+  //   // response.ConnectionClose = true;
+  //
+  //   // Set necessary headers for WebSocket connection
+  //   response.Headers.Add("Upgrade", "websocket");
+  //   response.Headers.Add("Connection", "Upgrade");
+  //
+  //   // Write the response headers
+  //   response.Close();
+  //
+  //   // Create a new instance of WebSocketService
+  //   var webSocketService = new WebSocketService();
+  //
+  //   // Assuming you want to connect the WebSocket after the upgrade
+  //   // You might need to adjust this part based on how you intend to manage WebSocket connections
+  //   Guid clientId = Guid.NewGuid(); // Generate a unique ID for the client
+  //   var webSocket = new ClientWebSocket();
+  //   await webSocket.ConnectAsync(new Uri("wss://" + _host + request.RawUrl), CancellationToken.None);
+  //   await webSocketService.Connect(clientId, webSocket);
+  //   Logger.LogSync("WebsocketConnected");
+  // }
 
   private static async Task HandleGetDataRequestAsync(HttpListenerContext context)
   {
@@ -148,9 +192,10 @@ public class APIService
   
   private static string GetRouteFromUrl(string urlPath)
   {
-    var segments = urlPath.Split('/');
-    return segments.Length > 1 ? segments[1] : "";
+    var segments = urlPath.Split('?');
+    if (segments.Length < 1)
+      return "";
+    return segments[0].EndsWith('/') ? segments[0][..^1] : segments[1];
   }
-
-
+  
 }
