@@ -8,7 +8,8 @@ public class Config
   private static IConfiguration _configuration;
   
   public static string AISKey => GetValueOrDefault<string>("AISKey", "No configuration for AISKey");
-  public static string SQLConnectionString => GetValueOrDefault<string>("SQLConnectionString", "No configuration for SQLConnectionString");
+  public static string DBConnectionString => GetValueOrDefault<string>("DBConnectionString", "No configuration for DBConnectionString");
+  public static string DBPositionReportTable => GetValueOrDefault<string>("DBConnectionString", "No configuration for DBPositionReportTable");
   public static string SagaBlueMMSI => GetValueOrDefault<string>("SagaBlueMMSI", "No configuration for SagaBlueMMSI");
   public static string APIHost => GetValueOrDefault<string>("APIHost", "No configuration for APIHost");
   public static string APIPort => GetValueOrDefault<string>("APIPort", "No configuration for APIPort");

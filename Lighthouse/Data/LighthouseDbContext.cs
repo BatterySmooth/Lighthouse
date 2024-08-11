@@ -10,12 +10,12 @@ public class LighthouseDbContext : DbContext
 
   protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
   {
-    optionsBuilder.UseNpgsql(Config.SQLConnectionString);
+    optionsBuilder.UseNpgsql(Config.DBConnectionString);
   }
   
   protected override void OnModelCreating(ModelBuilder modelBuilder)
   {
-    modelBuilder.Entity<PositionReportRecord>().ToTable("TEST_PositionReports");
+    modelBuilder.Entity<PositionReportRecord>().ToTable(Config.DBPositionReportTable);
     modelBuilder.Entity<PositionReportRecord>().HasKey(t => t.PositionReportID);
   }
   
