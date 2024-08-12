@@ -21,7 +21,7 @@ public class Config
   public static string DBPositionReportTable => GetValueOrDefault<string>("DBPositionReportTable", "No configuration for DBPositionReportTable");
   
   [SuppressMessage("ReSharper", "InconsistentNaming")]
-  public static int RelayPort => GetValueOrDefault<int>("RelayPort", "No configuration for RelayPort");
+  public static string RelayEndpoint => GetValueOrDefault<string>("RelayEndpoint", "No configuration for RelayEndpoint");
   
   public static void Initialise()
   {

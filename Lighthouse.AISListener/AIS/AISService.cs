@@ -6,24 +6,26 @@ using Lighthouse.AISListener.Configuration;
 using Lighthouse.AISListener.Data;
 using Lighthouse.AISListener.Data.Models;
 using Lighthouse.AISListener.Logging;
-using Lighthouse.AISListener.Relay;
 using Newtonsoft.Json;
 
 namespace Lighthouse.AISListener.AIS;
 
 public class AISService
 {
-  public CancellationToken Token { get; }
-  private RelayServer _relayServer;
-  private ClientWebSocket _webSocket;
+  private readonly ClientWebSocket _webSocket;
+  private readonly HttpClient _httpClient;
+  private CancellationToken Token { get; }
+  private List<string> _relayDataQueue;
   private bool _isRunning;
   private int _attempt;
 
-  public AISService(RelayServer relayServer)
+  public AISService()
   {
-    _relayServer = relayServer;
     var cancellationTokenSource = new CancellationTokenSource();
     Token = cancellationTokenSource.Token;
+    _webSocket = new ClientWebSocket();
+    _httpClient = new HttpClient();
+    _relayDataQueue = new List<string>();
   }
 
   public async Task InitializeAsync()
@@ -41,12 +43,11 @@ public class AISService
     {
       APIKey = Config.AISKey,
       BoundingBoxes = new List<List<List<double>>> { new() { new List<double> { -180, -90 }, new List<double> { 180, 90 } } },
-      FiltersShipMMSI = new List<string> { Config.SagaBlueMMSI },
+      FiltersShipMMSI = new List<string> { Config.SagaBlueMMSI, "229490000" },
       FilterMessageTypes = new List<string> { "PositionReport" }
     };
     string connectionJson = JsonConvert.SerializeObject(connectionMsg);
     
-    _webSocket = new ClientWebSocket();
     await _webSocket.ConnectAsync(new Uri("wss://stream.aisstream.io/v0/stream"), Token);
     await _webSocket.SendAsync(new ArraySegment<byte>(Encoding.UTF8.GetBytes(connectionJson)), WebSocketMessageType.Text, true, Token);
   }
@@ -68,6 +69,7 @@ public class AISService
       var msgRaw = Encoding.Default.GetString(buffer, 0, result.Count);
       var msg = JsonConvert.DeserializeObject<ReceivedMessage>(msgRaw);
 
+      // Save to Database
       try
       {
         await Database.Save(new PositionReportRecord()
@@ -88,17 +90,32 @@ public class AISService
         Logger.LogAsync($"Failed to write to database: {e}");
       }
 
+      // Send relay message
+      _relayDataQueue.Add(msgRaw);
+      await SendRelayMessage();
+    }
+  }
+  
+  private async Task SendRelayMessage()
+  {
+    var exceptions = new List<HttpRequestException>();
+    foreach (var msg in _relayDataQueue.ToList())
+    {
       try
       {
-        // Relay logic
-        await _relayServer.Broadcast(msgRaw);
+        var httpContent = new StringContent(msg, Encoding.UTF8, "application/json");
+        await _httpClient.PostAsync($"http://{Config.RelayEndpoint}", httpContent, Token);
+        _relayDataQueue.Remove(msg);
       }
-      catch (Exception e)
+      catch (HttpRequestException e)
       {
-        Logger.LogAsync($"Server error: {e}");
-        throw;
+        exceptions.Add(e);
       }
     }
+    
+    // Notify of failed bundles
+    if (exceptions.Count > 0)
+      Logger.LogAsync($"Failed to send {exceptions.Count} bundles to the relay:{Environment.NewLine}{String.Join(Environment.NewLine, exceptions.Select(e => e.Message))}");
   }
 
   private async Task HandleWebsocketClose()

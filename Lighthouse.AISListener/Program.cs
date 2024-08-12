@@ -1,7 +1,6 @@
 ﻿using Lighthouse.AISListener.AIS;
 using Lighthouse.AISListener.Configuration;
 using Lighthouse.AISListener.Data;
-using Lighthouse.AISListener.Relay;
 
 namespace Lighthouse.AISListener
 {
@@ -12,10 +11,7 @@ namespace Lighthouse.AISListener
       Config.Initialise();
       Database.Initialise();
       
-      var relayServer = new RelayServer();
-      await relayServer.Start();
-      
-      AISService aisService = new AISService(relayServer);
+      AISService aisService = new AISService();
       await aisService.InitializeAsync();
 
       await Task.Delay(-1);

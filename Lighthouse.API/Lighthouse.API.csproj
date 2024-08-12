@@ -20,7 +20,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <None Include="secrets.example.json" />
       <None Include="secrets.json">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
