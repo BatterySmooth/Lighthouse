@@ -28,7 +28,7 @@ public class RelayListener
     // Check if the request method is POST
     if (context.Request.HttpMethod == "POST")
     {
-      Console.WriteLine($"Received Relay Data");
+      Console.WriteLine("Received Relay Data");
       Console.WriteLine(GetRequestPostData(context.Request));
 
       byte[] responseBytes = System.Text.Encoding.UTF8.GetBytes("OK");
