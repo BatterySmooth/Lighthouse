@@ -6,7 +6,7 @@ namespace Lighthouse.Data;
 public class Database
 {
   private static LighthouseDbContext _dbContext;
-  
+
   public static void Initialise()
   {
     Logger.LogSync("Connecting to Database");

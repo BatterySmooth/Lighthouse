@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="PublishConfigData" serverName="Lighthouse" remoteFilesAllowedToDisappearOnAutoupload="false">
+    <serverData>
+      <paths name="Lighthouse">
+        <serverdata>
+          <mappings>
+            <mapping local="$PROJECT_DIR$/Lighthouse.sln" web="/" />
+            <mapping local="$PROJECT_DIR$/Lighthouse/Lighthouse.csproj" web="/" />
+            <mapping local="$PROJECT_DIR$/Lighthouse/Data/Models/PositionReportRecord.cs" web="/" />
+            <mapping local="$PROJECT_DIR$/Lighthouse/Data/LighthouseDbContext.cs" web="/" />
+            <mapping local="$PROJECT_DIR$/Lighthouse/Data/Database.cs" web="/" />
+            <mapping local="$PROJECT_DIR$/Lighthouse/AIS/OutgoingMessages/ConnectionRequest.cs" web="/" />
+            <mapping local="$PROJECT_DIR$/Lighthouse/AIS/IncomingMessages/PositionReport.cs" web="/" />
+            <mapping local="$PROJECT_DIR$/Lighthouse/AIS/IncomingMessages/ReceivedMessage.cs" web="/" />
+            <mapping local="$PROJECT_DIR$/Lighthouse/AIS/IncomingMessages/MetaData.cs" web="/" />
+            <mapping local="$PROJECT_DIR$/Lighthouse/AIS/IncomingMessages/Message.cs" web="/" />
+            <mapping local="$PROJECT_DIR$/Lighthouse/AIS/AISService.cs" web="/" />
+            <mapping local="$PROJECT_DIR$/Lighthouse/Logging/Logger.cs" web="/" />
+            <mapping local="$PROJECT_DIR$/Lighthouse/Configuration/Config.cs" web="/" />
+            <mapping local="$PROJECT_DIR$/Lighthouse/API/APIService.cs" web="/" />
+            <mapping local="$PROJECT_DIR$/Lighthouse/Websockets/WebSocketService.cs" web="/" />
+            <mapping local="$PROJECT_DIR$/Lighthouse/Program.cs" web="/" />
+            <mapping local="$PROJECT_DIR$/../../../../../../Program Files/dotnet/sdk/7.0.317/Sdks/Microsoft.NET.Sdk/analyzers/build/config/analysislevel_7_default.editorconfig" web="/" />
+            <mapping local="$PROJECT_DIR$/Lighthouse/Dockerfile" web="/" />
+            <mapping local="$PROJECT_DIR$/Lighthouse/secrets.example.json" web="/" />
+            <mapping local="$PROJECT_DIR$/Lighthouse/secrets.json" web="/" />
+            <mapping local="$PROJECT_DIR$/.dockerignore" web="/" />
+            <mapping local="$PROJECT_DIR$/Lighthouse/obj/Release/net7.0/Lighthouse.GlobalUsings.g.cs" web="/" />
+            <mapping local="$PROJECT_DIR$/Lighthouse/obj/Release/net7.0/Lighthouse.AssemblyInfo.cs" web="/" />
+            <mapping local="$PROJECT_DIR$/Lighthouse/obj/Release/net7.0/Lighthouse.GeneratedMSBuildEditorConfig.editorconfig" web="/" />
+            <mapping local="$PROJECT_DIR$" web="/" />
+          </mappings>
+        </serverdata>
+      </paths>
+    </serverData>
+  </component>
+</project>
