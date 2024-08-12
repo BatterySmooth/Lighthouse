@@ -1,10 +1,15 @@
-﻿namespace Lighthouse.API.Configuration;
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace Lighthouse.API.Configuration;
 
 public class Config
 {
   private static IConfiguration _configuration;
   
+  [SuppressMessage("ReSharper", "InconsistentNaming")]
   public static string DBConnectionString => GetValueOrDefault<string>("DBConnectionString", "No configuration for DBConnectionString");
+  
+  [SuppressMessage("ReSharper", "InconsistentNaming")]
   public static string DBPositionReportTable => GetValueOrDefault<string>("DBPositionReportTable", "No configuration for DBPositionReportTable");
 
   public static void Initialise()

@@ -1,4 +1,5 @@
-﻿using Lighthouse.AISListener.Logging;
+﻿using System.Diagnostics.CodeAnalysis;
+using Lighthouse.AISListener.Logging;
 using Microsoft.Extensions.Configuration;
 
 namespace Lighthouse.AISListener.Configuration;
@@ -7,10 +8,20 @@ public class Config
 {
   private static IConfiguration _configuration;
   
+  [SuppressMessage("ReSharper", "InconsistentNaming")]
   public static string AISKey => GetValueOrDefault<string>("AISKey", "No configuration for AISKey");
+  
+  [SuppressMessage("ReSharper", "InconsistentNaming")]
   public static string SagaBlueMMSI => GetValueOrDefault<string>("SagaBlueMMSI", "No configuration for SagaBlueMMSI");
+  
+  [SuppressMessage("ReSharper", "InconsistentNaming")]
   public static string DBConnectionString => GetValueOrDefault<string>("DBConnectionString", "No configuration for DBConnectionString");
+  
+  [SuppressMessage("ReSharper", "InconsistentNaming")]
   public static string DBPositionReportTable => GetValueOrDefault<string>("DBPositionReportTable", "No configuration for DBPositionReportTable");
+  
+  [SuppressMessage("ReSharper", "InconsistentNaming")]
+  public static int RelayPort => GetValueOrDefault<int>("RelayPort", "No configuration for RelayPort");
   
   public static void Initialise()
   {

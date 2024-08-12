@@ -6,6 +6,7 @@ using Lighthouse.AISListener.Configuration;
 using Lighthouse.AISListener.Data;
 using Lighthouse.AISListener.Data.Models;
 using Lighthouse.AISListener.Logging;
+using Lighthouse.AISListener.Relay;
 using Newtonsoft.Json;
 
 namespace Lighthouse.AISListener.AIS;
@@ -13,12 +14,14 @@ namespace Lighthouse.AISListener.AIS;
 public class AISService
 {
   public CancellationToken Token { get; }
+  private RelayServer _relayServer;
   private ClientWebSocket _webSocket;
   private bool _isRunning;
   private int _attempt;
 
-  public AISService()
+  public AISService(RelayServer relayServer)
   {
+    _relayServer = relayServer;
     var cancellationTokenSource = new CancellationTokenSource();
     Token = cancellationTokenSource.Token;
   }
@@ -62,7 +65,8 @@ public class AISService
         break;
       }
 
-      var msg = JsonConvert.DeserializeObject<ReceivedMessage>(Encoding.Default.GetString(buffer, 0, result.Count));
+      var msgRaw = Encoding.Default.GetString(buffer, 0, result.Count);
+      var msg = JsonConvert.DeserializeObject<ReceivedMessage>(msgRaw);
 
       try
       {
@@ -82,6 +86,17 @@ public class AISService
       {
         Logger.LogAsync($"FAILED MESSAGE   | Ship: {msg.MetaData.ShipName} | Pos: {msg.Message.PositionReport.Latitude}, {msg.Message.PositionReport.Longitude} | Head: {msg.Message.PositionReport.TrueHeading}");
         Logger.LogAsync($"Failed to write to database: {e}");
+      }
+
+      try
+      {
+        // Relay logic
+        await _relayServer.Broadcast(msgRaw);
+      }
+      catch (Exception e)
+      {
+        Logger.LogAsync($"Server error: {e}");
+        throw;
       }
     }
   }
