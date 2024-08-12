@@ -1,5 +1,5 @@
-﻿using Lighthouse.API.Data.Models;
-using Lighthouse.Configuration;
+﻿using Lighthouse.API.Configuration;
+using Lighthouse.API.Data.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace Lighthouse.API.Data;

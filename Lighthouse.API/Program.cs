@@ -1,5 +1,5 @@
+using Lighthouse.API.Configuration;
 using Lighthouse.API.Data;
-using Lighthouse.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,7 +9,6 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
   app.UseSwagger();

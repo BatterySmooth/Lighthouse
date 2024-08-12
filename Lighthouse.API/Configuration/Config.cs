@@ -1,6 +1,4 @@
-﻿using Microsoft.Extensions.Configuration;
-
-namespace Lighthouse.Configuration;
+﻿namespace Lighthouse.API.Configuration;
 
 public class Config
 {

@@ -1,7 +1,5 @@
 ﻿using Lighthouse.API.Data;
-using Lighthouse.API.Data.Models;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace Lighthouse.API.Controllers;
 
