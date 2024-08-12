@@ -38,7 +38,7 @@ public class AISService
     {
       APIKey = Config.AISKey,
       BoundingBoxes = new List<List<List<double>>> { new() { new List<double> { -180, -90 }, new List<double> { 180, 90 } } },
-      //FiltersShipMMSI = new List<string> { Config.SagaBlueMMSI },
+      FiltersShipMMSI = new List<string> { Config.SagaBlueMMSI },
       FilterMessageTypes = new List<string> { "PositionReport" }
     };
     string connectionJson = JsonConvert.SerializeObject(connectionMsg);
