@@ -1,14 +1,16 @@
-﻿using Lighthouse.Relay.Configuration;
+﻿using System.Net;
+using Lighthouse.Relay.Configuration;
+using Lighthouse.Relay.WebSockets;
 
 namespace Lighthouse.Relay;
 
 class Program
 {
-  static void Main(string[] args)
+  static async Task Main(string[] args)
   {
     Config.Initialise();
     
     RelayListener listener = new RelayListener();
-    listener.Start();
+    await listener.Start();
   }
 }

@@ -9,7 +9,10 @@ public class Config
   
   [SuppressMessage("ReSharper", "InconsistentNaming")]
   public static string RelayPostEndpoint => GetValueOrDefault<string>("RelayPostEndpoint", "No configuration for RelayPostEndpoint");
-
+  
+  [SuppressMessage("ReSharper", "InconsistentNaming")]
+  public static string WebsocketEndpoint => GetValueOrDefault<string>("WebsocketEndpoint", "No configuration for WebsocketEndpoint");
+  
   public static void Initialise()
   {
     Console.WriteLine("Setting up Configuration");

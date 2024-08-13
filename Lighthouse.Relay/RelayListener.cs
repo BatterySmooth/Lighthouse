@@ -1,12 +1,15 @@
 ﻿using System.Net;
 using Lighthouse.Relay.Configuration;
+using Lighthouse.Relay.WebSockets;
 
 namespace Lighthouse.Relay;
 
 public class RelayListener
 {
+  private WebSocketManager _webSocketManager = new();
   private HttpListener _listener;
-  public void Start()
+
+  public async Task Start()
   {
     _listener = new HttpListener();
     _listener.Prefixes.Add($"http://{Config.RelayPostEndpoint}/");
@@ -16,14 +19,14 @@ public class RelayListener
     while (_listener.IsListening)
     {
       var context = _listener.GetContext();
-      ProcessPostRequest(context);
+      await ProcessPostRequest(context);
     }
 
     _listener.Stop();
     _listener.Close();
   }
 
-  private void ProcessPostRequest(HttpListenerContext context)
+  private async Task ProcessPostRequest(HttpListenerContext context)
   {
     // Check if the request method is POST
     if (context.Request.HttpMethod == "POST")
@@ -37,25 +40,24 @@ public class RelayListener
       Stream output = context.Response.OutputStream;
       output.Write(responseBytes, 0, responseBytes.Length);
       output.Close();
+      
+      Console.WriteLine("Broadcasting to clients");
+      await _webSocketManager.BroadcastAsync(GetRequestPostData(context.Request));
     }
   }
-  
-  public static string GetRequestPostData(HttpListenerRequest request)
+
+  private static string GetRequestPostData(HttpListenerRequest request)
   {
     if (!request.HasEntityBody)
-    {
-      return null;
-    }
-    using (System.IO.Stream body = request.InputStream) // here we have data
-    {
-      using (var reader = new System.IO.StreamReader(body, request.ContentEncoding))
-      {
-        return reader.ReadToEnd();
-      }
-    }
+      return "[Empty Request]";
+
+    using var body = request.InputStream;
+    using var reader = new StreamReader(body, request.ContentEncoding);
+    return reader.ReadToEnd();
   }
   
-  
+}
+
   // private List<ClientWebSocket> _clients = new();
   //
   // public async Task Start()
@@ -139,4 +141,3 @@ public class RelayListener
   //     }
   //   }
   // }
-}
