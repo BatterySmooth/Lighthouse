@@ -15,4 +15,6 @@ RUN dotnet publish "Lighthouse.AISListener.csproj" -c Release -o /app/publish /p
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+ARG ENVIRONMENT
+COPY ./Lighthouse.AISListener/secrets.${ENVIRONMENT}.json ./secrets.json
 ENTRYPOINT ["dotnet", "Lighthouse.AISListener.dll"]

@@ -15,4 +15,6 @@ RUN dotnet publish "Lighthouse.Relay.csproj" -c Release -o /app/publish /p:UseAp
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+ARG ENVIRONMENT
+COPY ./Lighthouse.Relay/secrets.${ENVIRONMENT}.json ./secrets.json
 ENTRYPOINT ["dotnet", "Lighthouse.Relay.dll"]
