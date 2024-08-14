@@ -11,7 +11,7 @@ public class Config
   public static string RelayPostEndpoint => GetValueOrDefault<string>("RelayPostEndpoint", "No configuration for RelayPostEndpoint");
   
   [SuppressMessage("ReSharper", "InconsistentNaming")]
-  public static string WebsocketEndpoint => GetValueOrDefault<string>("WebsocketEndpoint", "No configuration for WebsocketEndpoint");
+  public static string WebSocketEndpoint => GetValueOrDefault<string>("WebSocketEndpoint", "No configuration for WebSocketEndpoint");
   
   public static void Initialise()
   {

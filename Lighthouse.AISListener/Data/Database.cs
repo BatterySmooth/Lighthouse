@@ -1,5 +1,7 @@
-﻿using Lighthouse.AISListener.Data.Models;
+﻿using System.Text.Json.Nodes;
+using Lighthouse.AISListener.Data.Models;
 using Lighthouse.AISListener.Logging;
+using Newtonsoft.Json;
 
 namespace Lighthouse.AISListener.Data;
 
@@ -19,6 +21,12 @@ public class Database
     positionReportRecord.ReceivedDate = positionReportRecord.ReceivedDate.ToUniversalTime();
     _dbContext.PositionReports.Add(positionReportRecord);
     await _dbContext.SaveChangesAsync();
+  }
+
+  public static async Task Get()
+  {
+    var results = _dbContext.PositionReports;
+    Console.WriteLine(JsonConvert.SerializeObject(results.First()));
   }
   
 }

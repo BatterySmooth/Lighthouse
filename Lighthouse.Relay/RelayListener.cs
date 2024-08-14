@@ -6,43 +6,40 @@ namespace Lighthouse.Relay;
 
 public class RelayListener
 {
-  private WebSocketManager _webSocketManager = new();
-  private HttpListener _listener;
+  // private readonly WebSocketManager _webSocketManager = new();
 
   public async Task Start()
   {
-    _listener = new HttpListener();
-    _listener.Prefixes.Add($"http://{Config.RelayPostEndpoint}/");
-    _listener.Start();
-    Console.WriteLine("Listening...");
+    Console.WriteLine("Starting Relay listener");
+    var hostName = $"http://{Config.RelayPostEndpoint}/";
+    var listener = new HttpListener();
+    listener.Prefixes.Add(hostName);
+    listener.Start();
+    Console.WriteLine($"Relay listening on {hostName}");
 
-    while (_listener.IsListening)
+    while (listener.IsListening)
     {
-      var context = _listener.GetContext();
+      var context = await listener.GetContextAsync();
       await ProcessPostRequest(context);
     }
 
-    _listener.Stop();
-    _listener.Close();
+    listener.Stop();
+    listener.Close();
   }
 
   private async Task ProcessPostRequest(HttpListenerContext context)
   {
-    // Check if the request method is POST
     if (context.Request.HttpMethod == "POST")
     {
-      Console.WriteLine("Received Relay Data");
-      Console.WriteLine(GetRequestPostData(context.Request));
-
       byte[] responseBytes = System.Text.Encoding.UTF8.GetBytes("OK");
       context.Response.ContentType = "text/plain";
       context.Response.ContentLength64 = responseBytes.Length;
       Stream output = context.Response.OutputStream;
-      output.Write(responseBytes, 0, responseBytes.Length);
+      await output.WriteAsync(responseBytes);
       output.Close();
       
       Console.WriteLine("Broadcasting to clients");
-      await _webSocketManager.BroadcastAsync(GetRequestPostData(context.Request));
+      // await _webSocketManager.BroadcastAsync(GetRequestPostData(context.Request));
     }
   }
 
@@ -57,87 +54,3 @@ public class RelayListener
   }
   
 }
-
-  // private List<ClientWebSocket> _clients = new();
-  //
-  // public async Task Start()
-  // {
-  //   var relayPrefix = $"http://localhost:{Config.RelayPort}/";
-  //   Logger.LogSync($"Starting Relay server on {relayPrefix}");
-  //   
-  //   var listener = new HttpListener();
-  //   listener.Prefixes.Add(relayPrefix);
-  //   listener.Start();
-  //
-  //   while (true)
-  //   {
-  //     var context = await listener.GetContextAsync();
-  //     var request = context.Request;
-  //
-  //     if (request.HttpMethod == "GET")
-  //     {
-  //       var socket = new ClientWebSocket();
-  //       await socket.ConnectAsync(request.Url, CancellationToken.None);
-  //       _clients.Add(socket);
-  //       Logger.LogAsync("Relay Client connected");
-  //
-  //       // // Listen for messages from this client
-  //       // await ReceiveMessages(socket);
-  //     }
-  //     else
-  //     {
-  //       context.Response.StatusCode = 400;
-  //       context.Response.Close();
-  //     }
-  //   }
-  // }
-  //
-  // // private async Task ReceiveMessages(ClientWebSocket socket)
-  // // {
-  // //   try
-  // //   {
-  // //     while (socket.State == WebSocketState.Open)
-  // //     {
-  // //       var buffer = new byte[1024 * 4];
-  // //       var result = await socket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
-  // //
-  // //       if (result.MessageType == WebSocketMessageType.Text)
-  // //       {
-  // //         var message = Encoding.UTF8.GetString(buffer, 0, result.Count);
-  // //         Console.WriteLine($"Received: {message}");
-  // //
-  // //         // Broadcast the message to all clients
-  // //         Broadcast(message);
-  // //       }
-  // //       else if (result.MessageType == WebSocketMessageType.Close)
-  // //       {
-  // //         await socket.CloseOutputAsync(result.CloseStatus.Value, result.CloseStatusDescription,
-  // //           CancellationToken.None);
-  // //         _clients.Remove(socket);
-  // //         Console.WriteLine("Client disconnected.");
-  // //       }
-  // //     }
-  // //   }
-  // //   catch (Exception ex)
-  // //   {
-  // //     Console.WriteLine($"An error occurred: {ex}");
-  // //   }
-  // // }
-  //
-  // public async Task Broadcast(string message)
-  // {
-  //   foreach (var client in _clients)
-  //   {
-  //     if (client.State == WebSocketState.Open)
-  //     {
-  //       var bytes = Encoding.UTF8.GetBytes(message);
-  //       var segment = new ArraySegment<byte>(bytes);
-  //       await client.SendAsync(segment, WebSocketMessageType.Text, true, CancellationToken.None);
-  //     }
-  //     else
-  //     {
-  //       await client.CloseOutputAsync(WebSocketCloseStatus.NormalClosure, "", CancellationToken.None);
-  //       _clients.Remove(client);
-  //     }
-  //   }
-  // }

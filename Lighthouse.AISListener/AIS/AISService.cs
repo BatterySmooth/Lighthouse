@@ -104,12 +104,24 @@ public class AISService
       try
       {
         var httpContent = new StringContent(msg, Encoding.UTF8, "application/json");
-        await _httpClient.PostAsync($"http://{Config.RelayEndpoint}", httpContent, Token);
-        _relayDataQueue.Remove(msg);
+        HttpResponseMessage response = await _httpClient.PostAsync($"http://{Config.RelayEndpoint}/", httpContent, Token);
+        if (response.IsSuccessStatusCode)
+        {
+          await response.Content.ReadAsStringAsync(Token);
+          _relayDataQueue.Remove(msg);
+        }
+        else
+        {
+          Logger.LogAsync($"Error sending message to http://{Config.RelayEndpoint}/ : {(int)response.StatusCode} {response.ReasonPhrase}");
+        }
       }
       catch (HttpRequestException e)
       {
         exceptions.Add(e);
+      }
+      catch (Exception e)
+      {
+        Logger.LogAsync($"Generic error when trying to post: {e}");
       }
     }
     

@@ -8,7 +8,7 @@ namespace Lighthouse.Relay.WebSockets
     private List<Client> _connectedClients = new();
     public WebSocketManager()
     {
-      _server = new Server(Config.WebsocketEndpoint);
+      _server = new Server(Config.WebSocketEndpoint);
       
       _server.OnClientConnected += (sender, e) =>
       {
