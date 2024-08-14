@@ -18,7 +18,7 @@ public class Config
     
     _configuration = new ConfigurationBuilder()
       .SetBasePath(Directory.GetCurrentDirectory())
-      .AddJsonFile("secrets.json", optional: false, reloadOnChange: true)
+      .AddJsonFile("secrets.test.json", optional: false, reloadOnChange: true)
       .Build();
   }
   

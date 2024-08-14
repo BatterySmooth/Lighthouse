@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Lighthouse.API.Controllers;
 
 [ApiController]
-[Route("[controller]")]
+[Route("api/[controller]")]
 public class PositionReportController : ControllerBase
 {
   private readonly ILogger<PositionReportController> _logger;
