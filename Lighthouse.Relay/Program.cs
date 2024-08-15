@@ -1,4 +1,6 @@
-﻿using System.Net;
+﻿//Implementing: https://github.com/MazyModz/CSharp-WebSocket-Server
+
+using System.Net;
 using Lighthouse.Relay.Configuration;
 using Lighthouse.Relay.WebSockets;
 

@@ -6,4 +6,17 @@ public class ConnectionRequest
   public List<List<List<double>>> BoundingBoxes { get; set; } = new();
   public List<string>? FiltersShipMMSI { get; set; } = new();
   public List<string>? FilterMessageTypes { get; set; } = new();
+  
+  // object test =
+  // {
+  //   "APIKey": "a",
+  //   "BoundingBoxes": [
+  //     [ [-180, -90], [180, 90] ],
+  //     [ [-180, -90], [180, 90] ],
+  //   ],
+  //   "FilterShipMMSI": ["1", "2", "3"],
+  //   "FilterMessageTypes": ["1", "2", "3"]
+  // }
 }
+
+

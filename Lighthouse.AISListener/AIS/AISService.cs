@@ -2,6 +2,7 @@
 using System.Text;
 using Lighthouse.AISListener.AIS.IncomingMessages;
 using Lighthouse.AISListener.AIS.OutgoingMessages;
+using Lighthouse.AISListener.AIS.Subscription;
 using Lighthouse.AISListener.Configuration;
 using Lighthouse.AISListener.Data;
 using Lighthouse.AISListener.Data.Models;
@@ -39,17 +40,15 @@ public class AISService
 
   private async Task Connect()
   {
-    var connectionMsg = new ConnectionRequest
-    {
-      APIKey = Config.AISKey,
-      BoundingBoxes = new List<List<List<double>>> { new() { new List<double> { -180, -90 }, new List<double> { 180, 90 } } },
-      FiltersShipMMSI = new List<string> { Config.SagaBlueMMSI },
-      FilterMessageTypes = new List<string> { "PositionReport" }
-    };
-    string connectionJson = JsonConvert.SerializeObject(connectionMsg);
+    var subscription = new SubscriptionBuilder(Config.AISKey)
+      .AddBoundingBox((-180, -90), (180, 90))
+      .AddShipMMSIFilter(Config.SagaBlueMMSI)
+      .AddMessageTypeFilter(MessageType.PositionReport)
+      .Build()
+      .Serialise();
     
     await _webSocket.ConnectAsync(new Uri("wss://stream.aisstream.io/v0/stream"), Token);
-    await _webSocket.SendAsync(new ArraySegment<byte>(Encoding.UTF8.GetBytes(connectionJson)), WebSocketMessageType.Text, true, Token);
+    await _webSocket.SendAsync(new ArraySegment<byte>(Encoding.UTF8.GetBytes(subscription)), WebSocketMessageType.Text, true, Token);
   }
 
   private async Task ListenAndProcess()
@@ -69,6 +68,7 @@ public class AISService
       var msgRaw = Encoding.Default.GetString(buffer, 0, result.Count);
       var msg = JsonConvert.DeserializeObject<ReceivedMessage>(msgRaw);
 
+      Logger.LogAsync(msgRaw);
       // Save to Database
       try
       {
@@ -91,8 +91,8 @@ public class AISService
       }
 
       // Send relay message
-      _relayDataQueue.Add(msgRaw);
-      await SendRelayMessage();
+      // _relayDataQueue.Add(msgRaw);
+      // await SendRelayMessage();
     }
   }
   

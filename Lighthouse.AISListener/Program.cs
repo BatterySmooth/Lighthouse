@@ -1,4 +1,5 @@
 ﻿using Lighthouse.AISListener.AIS;
+using Lighthouse.AISListener.AIS.Subscription;
 using Lighthouse.AISListener.Configuration;
 using Lighthouse.AISListener.Data;
 
@@ -10,10 +11,10 @@ namespace Lighthouse.AISListener
     {
       Config.Initialise();
       Database.Initialise();
-      
+
       AISService aisService = new AISService();
       await aisService.InitializeAsync();
-
+      
       await Task.Delay(-1);
     }
     
