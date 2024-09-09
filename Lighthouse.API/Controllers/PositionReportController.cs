@@ -20,22 +20,19 @@ public class PositionReportController : ControllerBase
     if (!ModelState.IsValid)
     {
       var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);
+      Console.WriteLine($"GET FAILED | GetPositionReports {dateRange.StartDate} - {dateRange.EndDate}: {string.Join(",", errors)}");
       return BadRequest($"Request model validation failed: {errors}");
     }
 
     if (dateRange.StartDate > dateRange.EndDate)
     {
+      Console.WriteLine($"GET FAILED | GetPositionReports {dateRange.StartDate} - {dateRange.EndDate}: Start date must be before end date");
       return BadRequest("Start date must be before end date");
     }
     
     var dbRecords = Database.GetPositionReportsBetweenDates(dateRange.StartDate, dateRange.EndDate);
-
-    if (dbRecords == null)
-    {
-      Console.WriteLine($"Error fetching records between {dateRange.StartDate} and {dateRange.EndDate}");
-      return StatusCode(StatusCodes.Status500InternalServerError);
-    }
     
+    Console.WriteLine($"GET OK | GetPositionReports {dateRange.StartDate} - {dateRange.EndDate}: {dbRecords.Count} records returned");
     return Ok(dbRecords);
   }
   
