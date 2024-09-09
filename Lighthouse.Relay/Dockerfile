@@ -17,4 +17,5 @@ WORKDIR /app
 COPY --from=publish /app/publish .
 ARG ENVIRONMENT
 COPY ./Lighthouse.Relay/secrets.${ENVIRONMENT}.json ./secrets.json
+RUN find . -type f -name "secrets.*.json" ! -name "secrets.json" -delete
 ENTRYPOINT ["dotnet", "Lighthouse.Relay.dll"]
