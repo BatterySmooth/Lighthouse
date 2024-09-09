@@ -56,43 +56,61 @@ public class AISService
     byte[] buffer = new byte[4096];
     Logger.LogSync("Awaiting AIS messages");
 
-    while (_isRunning && _webSocket.State == WebSocketState.Open)
+    while (_isRunning)
     {
-      var result = await _webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), Token);
-      if (result.MessageType == WebSocketMessageType.Close)
-      {
-        await HandleWebsocketClose();
-        break;
-      }
-
-      var msgRaw = Encoding.Default.GetString(buffer, 0, result.Count);
-      var msg = JsonConvert.DeserializeObject<ReceivedMessage>(msgRaw);
-
-      Logger.LogAsync(msgRaw);
-      // Save to Database
       try
       {
-        await Database.Save(new PositionReportRecord()
+        if (_webSocket.State != WebSocketState.Open)
         {
-          PositionReportID = new Guid(),
-          ReceivedDate = DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Utc),
-          MMSI = msg.Message.PositionReport.UserID,
-          RateOfTurn = msg.Message.PositionReport.RateOfTurn,
-          Latitude = msg.Message.PositionReport.Latitude,
-          Longitude = msg.Message.PositionReport.Longitude,
-          TrueHeading = msg.Message.PositionReport.TrueHeading
-        });
-        Logger.LogAsync($"RECEIVED MESSAGE | Ship: {msg.MetaData.ShipName} | Pos: {msg.Message.PositionReport.Latitude}, {msg.Message.PositionReport.Longitude} | Head: {msg.Message.PositionReport.TrueHeading}");
+          await HandleWebsocketClose();
+          continue;
+        }
+        
+        var result = await _webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), Token);
+        if (result.MessageType == WebSocketMessageType.Close)
+        {
+          await HandleWebsocketClose();
+          break;
+        }
+        
+        var msgRaw = Encoding.Default.GetString(buffer, 0, result.Count);
+        var msg = JsonConvert.DeserializeObject<ReceivedMessage>(msgRaw);
+        
+        // Save to Database
+        try
+        {
+          await Database.Save(new PositionReportRecord()
+          {
+            PositionReportID = new Guid(),
+            ReceivedDate = DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Utc),
+            MMSI = msg.Message.PositionReport.UserID,
+            RateOfTurn = msg.Message.PositionReport.RateOfTurn,
+            Latitude = msg.Message.PositionReport.Latitude,
+            Longitude = msg.Message.PositionReport.Longitude,
+            TrueHeading = msg.Message.PositionReport.TrueHeading
+          });
+          Logger.LogAsync($"RECEIVED MESSAGE | Ship: {msg.MetaData.ShipName} | Pos: {msg.Message.PositionReport.Latitude}, {msg.Message.PositionReport.Longitude} | Head: {msg.Message.PositionReport.TrueHeading}");
+        }
+        catch (Exception e)
+        {
+          Logger.LogAsync($"FAILED MESSAGE   | Ship: {msg.MetaData.ShipName} | Pos: {msg.Message.PositionReport.Latitude}, {msg.Message.PositionReport.Longitude} | Head: {msg.Message.PositionReport.TrueHeading}");
+          Logger.LogAsync($"Failed to write to database: {e}");
+        }
+        
+        // Send relay message
+        // _relayDataQueue.Add(msgRaw);
+        // await SendRelayMessage();
       }
-      catch (Exception e)
+      catch (WebSocketException ex)
       {
-        Logger.LogAsync($"FAILED MESSAGE   | Ship: {msg.MetaData.ShipName} | Pos: {msg.Message.PositionReport.Latitude}, {msg.Message.PositionReport.Longitude} | Head: {msg.Message.PositionReport.TrueHeading}");
-        Logger.LogAsync($"Failed to write to database: {e}");
+        Logger.LogAsync($"WebSocket exception occurred: {ex.Message}");
+        await HandleWebsocketClose();
       }
-
-      // Send relay message
-      // _relayDataQueue.Add(msgRaw);
-      // await SendRelayMessage();
+      catch (Exception ex)
+      {
+        Logger.LogAsync($"Unexpected exception occurred: {ex.Message}");
+        await HandleWebsocketClose();
+      }
     }
   }
   
@@ -133,9 +151,28 @@ public class AISService
   private async Task HandleWebsocketClose()
   {
     Logger.LogAsync("Websocket connection closed. Reconnecting...");
-    await _webSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, string.Empty, Token);
-    await Connect();
-    await ListenAndProcess();
+    try
+    {
+      await _webSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, string.Empty, Token);
+    }
+    catch (Exception ex)
+    {
+      Logger.LogAsync($"Error closing WebSocket: {ex.Message}");
+    }
+
+    _attempt++;
+    await DelayWithExponentialBackOff(_attempt);
+    
+    try
+    {
+      await Connect();
+      await ListenAndProcess();
+    }
+    catch (Exception ex)
+    {
+      Logger.LogAsync($"Failed to reconnect: {ex.Message}");
+      await DelayWithExponentialBackOff(_attempt);
+    }
   }
   
   private static async Task DelayWithExponentialBackOff(int attempt)
