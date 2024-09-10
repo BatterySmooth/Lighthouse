@@ -11,6 +11,9 @@ public class Config
   
   [SuppressMessage("ReSharper", "InconsistentNaming")]
   public static string DBPositionReportTable => GetValueOrDefault<string>("DBPositionReportTable", "No configuration for DBPositionReportTable");
+  
+  [SuppressMessage("ReSharper", "InconsistentNaming")]
+  public static string RelayPostEndpoint => GetValueOrDefault<string>("RelayPostEndpoint", "No configuration for RelayPostEndpoint");
 
   public static void Initialise()
   {
@@ -18,7 +21,7 @@ public class Config
     
     _configuration = new ConfigurationBuilder()
       .SetBasePath(Directory.GetCurrentDirectory())
-      .AddJsonFile("secrets.test.json", optional: false, reloadOnChange: true)
+      .AddJsonFile("secrets.json", optional: false, reloadOnChange: true)
       .Build();
   }
   

@@ -1,6 +1,5 @@
 ﻿//Implementing: https://github.com/MazyModz/CSharp-WebSocket-Server
 
-using System.Net;
 using Lighthouse.Relay.Configuration;
 using Lighthouse.Relay.WebSockets;
 
@@ -11,8 +10,11 @@ class Program
   static async Task Main(string[] args)
   {
     Config.Initialise();
+
+    var websocketServer = new WebSocketService();
+    _ = websocketServer.Start();
     
-    RelayListener listener = new RelayListener();
+    var listener = new RelayListener();
     await listener.Start();
   }
 }

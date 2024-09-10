@@ -1,4 +1,5 @@
 using Lighthouse.API.Configuration;
+using Lighthouse.API.Controllers.Relay;
 using Lighthouse.API.Data;
 
 namespace Lighthouse.API;
@@ -12,7 +13,6 @@ public class Program
     // Add services to the container.
 
     builder.Services.AddControllers();
-    // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen();
 
@@ -24,13 +24,16 @@ public class Program
       app.UseSwagger();
       app.UseSwaggerUI();
     }
-
-    app.UseHttpsRedirection();
+    app.UseWebSockets();
+    // app.UseHttpsRedirection();
     app.UseAuthorization();
     app.MapControllers();
     
     Config.Initialise();
     Database.Initialise();
+    
+    var listener = new RelayListener();
+    _ = listener.Start();
     
     app.Run();
   }

@@ -1,7 +1,7 @@
 ﻿using Lighthouse.API.Data;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Lighthouse.API.Controllers;
+namespace Lighthouse.API.Controllers.PositionReport;
 
 [ApiController]
 [Route("api/[controller]")]
@@ -14,7 +14,7 @@ public class PositionReportController : ControllerBase
     _logger = logger;
   }
   
-  [HttpGet(Name = "GetPositionReports")]
+  [HttpGet(Name = "PositionReports")]
   public IActionResult Get([FromQuery] DateRangeModel dateRange)
   {
     if (!ModelState.IsValid)
@@ -32,7 +32,7 @@ public class PositionReportController : ControllerBase
     
     var dbRecords = Database.GetPositionReportsBetweenDates(dateRange.StartDate, dateRange.EndDate);
     
-    Console.WriteLine($"GET OK | GetPositionReports {dateRange.StartDate} - {dateRange.EndDate}: {dbRecords.Count} records returned");
+    Console.WriteLine($"GET OK | PositionReports {dateRange.StartDate} - {dateRange.EndDate}: {dbRecords.Count} records returned");
     return Ok(dbRecords);
   }
   

@@ -1,6 +1,0 @@
-@Lighthouse.API_HostAddress = http://localhost:5271
-
-GET {{Lighthouse.API_HostAddress}}/GetPositionReports/
-Accept: application/json
-
-###

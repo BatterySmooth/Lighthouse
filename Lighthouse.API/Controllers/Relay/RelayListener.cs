@@ -1,12 +1,10 @@
 ﻿using System.Net;
-using Lighthouse.Relay.Configuration;
+using Lighthouse.API.Configuration;
 
-namespace Lighthouse.Relay;
+namespace Lighthouse.API.Controllers.Relay;
 
 public class RelayListener
 {
-  // private readonly WebSocketManager _webSocketManager = new();
-
   public async Task Start()
   {
     Console.WriteLine("Starting Relay listener");
@@ -38,8 +36,16 @@ public class RelayListener
       output.Close();
       
       Console.WriteLine("Broadcasting to clients");
-      // await _webSocketManager.BroadcastAsync(GetRequestPostData(context.Request));
+      var buffer = GetRequestBodyAsBuffer(context);
+      await RelayController.Broadcast(buffer, 0, buffer.Length);
     }
+  }
+  
+  public static byte[] GetRequestBodyAsBuffer(HttpListenerContext context)
+  {
+    using var reader = new StreamReader(context.Request.InputStream, leaveOpen: true);
+    var content = reader.ReadToEndAsync().Result;
+    return System.Text.Encoding.UTF8.GetBytes(content);
   }
 
   private static string GetRequestPostData(HttpListenerRequest request)
