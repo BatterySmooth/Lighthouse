@@ -1,7 +1,7 @@
-﻿using Lighthouse.AISListener.AIS;
-using Lighthouse.AISListener.AIS.Subscription;
-using Lighthouse.AISListener.Configuration;
-using Lighthouse.AISListener.Data;
+﻿using System.Threading.Tasks;
+using Lighthouse.AISListener.AIS;
+using Lighthouse.Tower.Configuration;
+using Lighthouse.Tower.Data;
 
 namespace Lighthouse.AISListener
 {
@@ -9,8 +9,8 @@ namespace Lighthouse.AISListener
   {
     public static async Task Main(string[] args)
     {
-      Config.Initialise();
-      Database.Initialise();
+      var config = new Config();
+      var db = new Database();
 
       AISService aisService = new AISService();
       await aisService.InitializeAsync();

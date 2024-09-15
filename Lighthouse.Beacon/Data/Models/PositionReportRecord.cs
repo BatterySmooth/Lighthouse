@@ -1,4 +1,4 @@
-﻿namespace Lighthouse.AISListener.Data.Models;
+﻿namespace Lighthouse.Beacon.Data.Models;
 
 public class PositionReportRecord
 {

@@ -1,8 +1,8 @@
-﻿using Lighthouse.AISListener.Configuration;
-using Lighthouse.AISListener.Data.Models;
+﻿using Lighthouse.Beacon.Configuration;
+using Lighthouse.Beacon.Data.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace Lighthouse.AISListener.Data;
+namespace Lighthouse.Beacon.Data;
 
 public class LighthouseDbContext : DbContext
 {

@@ -1,4 +1,6 @@
-﻿namespace Lighthouse.AISListener.AIS.Subscription;
+﻿using System;
+
+namespace Lighthouse.AISListener.AIS.Subscription;
 
 [Serializable]
 public class InvalidAISSubscriptionException : Exception

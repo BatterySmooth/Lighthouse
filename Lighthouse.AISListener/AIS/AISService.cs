@@ -1,12 +1,17 @@
-﻿using System.Net.WebSockets;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net.Http;
+using System.Net.WebSockets;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using Lighthouse.AISListener.AIS.IncomingMessages;
-using Lighthouse.AISListener.AIS.OutgoingMessages;
 using Lighthouse.AISListener.AIS.Subscription;
-using Lighthouse.AISListener.Configuration;
-using Lighthouse.AISListener.Data;
-using Lighthouse.AISListener.Data.Models;
-using Lighthouse.AISListener.Logging;
+using Lighthouse.Tower.Logging;
+using Lighthouse.Tower.Configuration;
+using Lighthouse.Tower.Data;
+using Lighthouse.Tower.Data.Models;
 using Newtonsoft.Json;
 
 namespace Lighthouse.AISListener.AIS;
@@ -63,7 +68,7 @@ public class AISService
         if (_webSocket.State != WebSocketState.Open)
         {
           await HandleWebsocketClose();
-          continue;
+          break;
         }
         
         var result = await _webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), Token);
@@ -122,7 +127,7 @@ public class AISService
       try
       {
         var httpContent = new StringContent(msg, Encoding.UTF8, "application/json");
-        HttpResponseMessage response = await _httpClient.PostAsync($"http://{Config.RelayEndpoint}/", httpContent, Token);
+        HttpResponseMessage response = await _httpClient.PostAsync($"http://{Config.RelayPostEndpoint}/", httpContent, Token);
         if (response.IsSuccessStatusCode)
         {
           await response.Content.ReadAsStringAsync(Token);
@@ -130,7 +135,7 @@ public class AISService
         }
         else
         {
-          Logger.LogAsync($"Error sending message to http://{Config.RelayEndpoint}/ : {(int)response.StatusCode} {response.ReasonPhrase}");
+          Logger.LogAsync($"Error sending message to http://{Config.RelayPostEndpoint}/ : {(int)response.StatusCode} {response.ReasonPhrase}");
         }
       }
       catch (HttpRequestException e)
@@ -178,7 +183,7 @@ public class AISService
   private static async Task DelayWithExponentialBackOff(int attempt)
   {
     // Start at 2 seconds, double each time up to 30 seconds
-    int delay = Math.Min(2000 * (int)Math.Pow(2, attempt), 30000);
+    int delay = Math.Min(Math.Abs(2000 * (int)Math.Pow(2, attempt)), 30000);
     Logger.LogSync($"Waiting {delay} ms before retrying...");
     await Task.Delay(delay);
   }

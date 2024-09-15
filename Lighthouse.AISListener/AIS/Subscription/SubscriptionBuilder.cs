@@ -1,4 +1,8 @@
-﻿namespace Lighthouse.AISListener.AIS.Subscription;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace Lighthouse.AISListener.AIS.Subscription;
 
 public class SubscriptionBuilder : ISubscriptionBuilder
 {
@@ -19,9 +23,14 @@ public class SubscriptionBuilder : ISubscriptionBuilder
 
   public ISubscriptionBuilder AddBoundingBox((double, double) corner1, (double, double) corner2)
   {
-    _subscription.BoundingBoxes.Add(new[] {
-        new[] { corner1.Item1, corner1.Item2 }, new[] { corner2.Item1, corner2.Item2 }
-    });
+    _subscription.BoundingBoxes.Add([
+      [corner1.Item1, corner1.Item2], [corner2.Item1, corner2.Item2]
+    ]);
+    return this;
+  }
+  public ISubscriptionBuilder RemoveBoundingBox((double, double) corner1, (double, double) corner2)
+  {
+    _subscription.BoundingBoxes.RemoveAll(box => box[0].Equals(corner1) && box[1].Equals(corner2));
     return this;
   }
 
@@ -38,6 +47,20 @@ public class SubscriptionBuilder : ISubscriptionBuilder
     foreach (var mmsi in mmsis)
       if (!_subscription.FiltersShipMMSI.Contains(mmsi))
         _subscription.FiltersShipMMSI.Add(mmsi);
+    return this;
+  }
+  public ISubscriptionBuilder RemoveShipMMSIFilter(string mmsi)
+  {
+    _subscription.FiltersShipMMSI ??= new List<string>();
+    _subscription.FiltersShipMMSI.RemoveAll(item => item.Equals(mmsi, StringComparison.OrdinalIgnoreCase));
+    return this;
+  }
+  public ISubscriptionBuilder RemoveShipMMSIFilter(IEnumerable<string> mmsis)
+  {
+    _subscription.FiltersShipMMSI ??= new List<string>();
+    var enumerable = mmsis.ToList();
+    if (enumerable.Any())
+      _subscription.FiltersShipMMSI.RemoveAll(item => enumerable.Any(mmsi => mmsi.Equals(item, StringComparison.OrdinalIgnoreCase)));
     return this;
   }
   

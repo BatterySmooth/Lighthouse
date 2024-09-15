@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace Lighthouse.AISListener.AIS.OutgoingMessages;
 
 public class ConnectionRequest

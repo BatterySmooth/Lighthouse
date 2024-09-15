@@ -6,6 +6,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lighthouse.Relay", "Lightho
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lighthouse.API", "Lighthouse.API\Lighthouse.API.csproj", "{6D6F62F7-45DE-47EB-9BEF-9D57C19CB3B1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lighthouse.Beacon", "Lighthouse.Beacon\Lighthouse.Beacon.csproj", "{D32B6C39-DB24-4B63-98D2-1CF4B957D0F6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lighthouse.Tower", "Lighthouse.Tower\Lighthouse.Tower.csproj", "{2AD8E270-EB6B-43F3-885C-11146DB91832}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,5 +28,13 @@ Global
 		{6D6F62F7-45DE-47EB-9BEF-9D57C19CB3B1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6D6F62F7-45DE-47EB-9BEF-9D57C19CB3B1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6D6F62F7-45DE-47EB-9BEF-9D57C19CB3B1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D32B6C39-DB24-4B63-98D2-1CF4B957D0F6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D32B6C39-DB24-4B63-98D2-1CF4B957D0F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D32B6C39-DB24-4B63-98D2-1CF4B957D0F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D32B6C39-DB24-4B63-98D2-1CF4B957D0F6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2AD8E270-EB6B-43F3-885C-11146DB91832}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2AD8E270-EB6B-43F3-885C-11146DB91832}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2AD8E270-EB6B-43F3-885C-11146DB91832}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2AD8E270-EB6B-43F3-885C-11146DB91832}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
