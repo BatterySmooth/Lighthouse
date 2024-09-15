@@ -1,6 +1,6 @@
-using Lighthouse.API.Configuration;
 using Lighthouse.API.Controllers.Relay;
-using Lighthouse.API.Data;
+using Lighthouse.Tower.Configuration;
+using Lighthouse.Tower.Data;
 
 namespace Lighthouse.API;
 
@@ -28,9 +28,9 @@ public class Program
     // app.UseHttpsRedirection();
     app.UseAuthorization();
     app.MapControllers();
-    
-    Config.Initialise();
-    Database.Initialise();
+
+    var config = new Config();
+    var db = new Database();
     
     var listener = new RelayListener();
     _ = listener.Start();

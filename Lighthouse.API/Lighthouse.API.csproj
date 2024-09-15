@@ -21,7 +21,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="obj\" />
+      <ProjectReference Include="..\Lighthouse.Tower\Lighthouse.Tower.csproj" />
     </ItemGroup>
 
 </Project>

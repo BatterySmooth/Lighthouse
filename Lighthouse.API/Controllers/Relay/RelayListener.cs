@@ -1,5 +1,5 @@
 ﻿using System.Net;
-using Lighthouse.API.Configuration;
+using Lighthouse.Tower.Configuration;
 
 namespace Lighthouse.API.Controllers.Relay;
 
